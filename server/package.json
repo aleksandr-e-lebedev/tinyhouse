@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "private": true,
   "scripts": {
+    "server": "nodemon src/index.js",
     "start": "node src/index.js"
   },
   "repository": {
@@ -25,6 +26,7 @@
     "express": "4.17.1"
   },
   "devDependencies": {
+    "nodemon": "2.0.5",
     "prettier": "2.1.2"
   },
   "engines": {
