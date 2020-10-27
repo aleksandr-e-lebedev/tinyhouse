@@ -1,0 +1,8 @@
+# Dependency directory
+node_modules/
+
+# Production directory
+build/
+
+# Temporary folder
+temp/
