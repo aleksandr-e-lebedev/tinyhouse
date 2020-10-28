@@ -1,10 +1,15 @@
 import express from 'express';
 
+import { listings } from './listings';
+
 const app = express();
 const port = 9000;
 
-app.get('/', (_req, res) => {
-  res.send('Hello world!');
+app.get('/listings', (_req, res) => {
+  res.send({
+    status: 'success',
+    data: { listings },
+  });
 });
 
 app.listen(port, () => {
