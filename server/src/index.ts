@@ -1,38 +1,13 @@
 import express from 'express';
+import { ApolloServer } from 'apollo-server-express';
 
-import { listings } from './listings';
+import { schema } from './graphql';
 
 const app = express();
 const port = 9000;
+const server = new ApolloServer({ schema });
 
-app.get('/listings', (_req, res) => {
-  res.send({
-    status: 'success',
-    data: { listings },
-  });
-});
-
-app.delete('/listings/:listingId', (req, res) => {
-  const { listingId } = req.params;
-
-  const indexOfListing = listings.findIndex(
-    (listing) => listing.id === listingId
-  );
-
-  if (indexOfListing >= 0) {
-    listings.splice(indexOfListing, 1);
-
-    return res.send({
-      status: 'success',
-      message: 'The listing has been removed',
-    });
-  }
-
-  res.status(404).send({
-    status: 'fail',
-    message: 'Sorry, cant find that listing',
-  });
-});
+server.applyMiddleware({ app, path: '/api' });
 
 app.listen(port, () => {
   console.log(`[app]: http://localhost:${port}`);
