@@ -1,7 +1,7 @@
 {
   "name": "tinyhouse-server",
   "version": "1.0.0",
-  "description": "Back-end application created with Node.js, Express and TypeScript",
+  "description": "Back-end application created with Node.js, Express, TypeScript, GraphQL and Apollo",
   "main": "src/index.ts",
   "private": true,
   "scripts": {
@@ -17,7 +17,9 @@
   "keywords": [
     "Node.js",
     "Express",
-    "TypeScript"
+    "TypeScript",
+    "GraphQL",
+    "Apollo"
   ],
   "author": "Aleksandr Lebedev",
   "license": "ISC",
@@ -26,7 +28,9 @@
   },
   "homepage": "https://github.com/aleksandr-e-lebedev/tinyhouse#readme",
   "dependencies": {
-    "express": "4.17.1"
+    "apollo-server-express": "2.18.2",
+    "express": "4.17.1",
+    "graphql": "14.7.0"
   },
   "devDependencies": {
     "@tsconfig/node12": "1.0.7",
