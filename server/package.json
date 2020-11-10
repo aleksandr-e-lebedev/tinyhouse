@@ -1,7 +1,7 @@
 {
   "name": "tinyhouse-server",
   "version": "1.0.0",
-  "description": "Back-end application created with Node.js, Express, TypeScript, GraphQL and Apollo",
+  "description": "Back-end application created with Node.js, Express, TypeScript, GraphQL, Apollo and MongoDB",
   "main": "src/index.ts",
   "private": true,
   "scripts": {
@@ -19,7 +19,8 @@
     "Express",
     "TypeScript",
     "GraphQL",
-    "Apollo"
+    "Apollo",
+    "MongoDB"
   ],
   "author": "Aleksandr Lebedev",
   "license": "ISC",
@@ -30,11 +31,13 @@
   "dependencies": {
     "apollo-server-express": "2.18.2",
     "express": "4.17.1",
-    "graphql": "14.7.0"
+    "graphql": "14.7.0",
+    "mongodb": "3.6.3"
   },
   "devDependencies": {
     "@tsconfig/node12": "1.0.7",
     "@types/express": "4.17.8",
+    "@types/mongodb": "3.5.33",
     "@types/node": "14.11.10",
     "@typescript-eslint/eslint-plugin": "4.6.0",
     "@typescript-eslint/parser": "4.6.0",
