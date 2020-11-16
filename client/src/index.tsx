@@ -1,7 +1,9 @@
 import React from 'react';
 import { render } from 'react-dom';
 
-const App = () => <div>Hello World!</div>;
+import { Listings } from './sections';
+
+const App = () => <Listings title="TinyHouse Listings" />;
 
 render(
   <React.StrictMode>
