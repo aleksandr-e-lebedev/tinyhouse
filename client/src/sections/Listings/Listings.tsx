@@ -1,7 +1,11 @@
 import React from 'react';
 
 import { server } from '../../lib/api';
-import { ListingsData } from './types';
+import {
+  ListingsData,
+  DeleteListingData,
+  DeleteListingVariables,
+} from './types';
 
 const LISTINGS = `
   query Listings {
@@ -19,6 +23,14 @@ const LISTINGS = `
   }
 `;
 
+const DELETE_LISTING = `
+  mutation DeleteListing($id: ID!) {
+    deleteListing(id: $id) {
+      id
+    }
+  }
+`;
+
 interface Props {
   title: string;
 }
@@ -29,11 +41,27 @@ export const Listings = ({ title }: Props): JSX.Element => {
     console.log(data);
   };
 
+  const deleteListing = async () => {
+    const { data } = await server.fetch<
+      DeleteListingData,
+      DeleteListingVariables
+    >({
+      query: DELETE_LISTING,
+      variables: {
+        id: '5fad5af750400620a72da1c0', // hardcoded id variable
+      },
+    });
+    console.log(data);
+  };
+
   return (
     <div>
       <h2>{title}</h2>
       <button type="button" onClick={fetchListings}>
         Query Listings!
+      </button>
+      <button type="button" onClick={deleteListing}>
+        Delete a listing!
       </button>
     </div>
   );
