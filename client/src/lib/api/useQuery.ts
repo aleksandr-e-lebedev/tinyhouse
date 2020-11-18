@@ -4,6 +4,8 @@ import { server } from './server';
 
 interface State<TData> {
   data: TData | null;
+  loading: boolean;
+  error: boolean;
 }
 
 interface QueryResult<TData> extends State<TData> {
@@ -13,20 +15,32 @@ interface QueryResult<TData> extends State<TData> {
 export const useQuery = <TData = unknown>(
   query: string
 ): QueryResult<TData> => {
-  const [state, setState] = useState<State<TData>>({ data: null });
+  const [state, setState] = useState<State<TData>>({
+    data: null,
+    loading: false,
+    error: false,
+  });
 
   const fetch = useCallback(() => {
     const fetchData = async () => {
-      const { data } = await server.fetch<TData>({ query });
-      setState({ data });
+      try {
+        setState({ data: null, loading: true, error: false });
+
+        const { data, errors } = await server.fetch<TData>({ query });
+
+        if (errors?.length) throw new Error(errors[0].message);
+
+        setState({ data, loading: false, error: false });
+      } catch (err) {
+        setState({ data: null, loading: false, error: true });
+        console.log(err);
+      }
     };
 
     void fetchData();
   }, [query]);
 
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
+  useEffect(fetch, [fetch]);
 
   return { ...state, refetch: fetch };
 };
