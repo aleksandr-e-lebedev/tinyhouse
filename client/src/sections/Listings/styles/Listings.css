@@ -1,0 +1,8 @@
+.listings {
+  max-width: 750px;
+  margin: 20px;
+}
+
+.listings .listings__alert {
+  margin-bottom: 20px;
+}
