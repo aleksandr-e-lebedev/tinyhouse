@@ -1,1 +1,13 @@
 @import '~antd/dist/antd.css';
+@import url(https://fonts.googleapis.com/css?family=Sacramento);
+
+html {
+  overflow: auto;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+}
