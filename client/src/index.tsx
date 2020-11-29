@@ -1,8 +1,9 @@
 import React from 'react';
 import { render } from 'react-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
-import { Listings } from './sections';
+import { Home, Host, Listing, Listings, User, NotFound } from './sections';
 
 import './styles/index.css';
 
@@ -11,13 +12,38 @@ const client = new ApolloClient({
   uri: '/api',
 });
 
-const App = () => <Listings title="TinyHouse Listings" />;
+const App = () => {
+  return (
+    <Switch>
+      <Route exact path="/">
+        <Home />
+      </Route>
+      <Route exact path="/host">
+        <Host />
+      </Route>
+      <Route exact path="/listing/:id">
+        <Listing />
+      </Route>
+      <Route exact path="/listings/:location?">
+        <Listings />
+      </Route>
+      <Route exact path="/user/:id">
+        <User />
+      </Route>
+      <Route>
+        <NotFound />
+      </Route>
+    </Switch>
+  );
+};
 
 render(
   <ApolloProvider client={client}>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
+    <Router>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </Router>
   </ApolloProvider>,
   document.getElementById('root')
 );
