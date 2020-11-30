@@ -9,7 +9,8 @@
     "build": "tsc -p ./",
     "start": "node build/index.js",
     "lint": "eslint src --ext .ts",
-    "seed": "ts-node -r dotenv/config temp/seed.ts"
+    "seed": "ts-node -r dotenv/config temp/seed.ts",
+    "clear": "ts-node -r dotenv/config temp/clear.ts"
   },
   "repository": {
     "type": "git",
