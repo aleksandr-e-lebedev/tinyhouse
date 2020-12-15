@@ -17,3 +17,7 @@ body,
   position: relative;
   background: #fff;
 }
+
+.app__affix-header {
+  z-index: 99;
+}

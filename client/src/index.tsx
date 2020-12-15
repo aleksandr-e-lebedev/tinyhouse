@@ -7,9 +7,10 @@ import {
   Redirect,
 } from 'react-router-dom';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-import { Layout } from 'antd';
+import { Affix, Layout } from 'antd';
 
 import {
+  AppHeader,
   Home,
   Host,
   Listing,
@@ -41,6 +42,9 @@ const App = () => {
 
   return (
     <Layout className="app">
+      <Affix offsetTop={0} className="app__affix-header">
+        <AppHeader viewer={viewer} setViewer={setViewer} />
+      </Affix>
       <Switch>
         <Route exact path="/">
           <Home />

@@ -1,0 +1,26 @@
+.app-header.ant-layout-header {
+  display: flex;
+  padding: 0;
+
+  background: #fff;
+  box-shadow: 0 2px 8px #f0f1f2;
+}
+
+.app-header__logo-search-section {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.app-header__logo {
+  display: inline-block;
+  padding: 0 20px;
+}
+
+.app-header__logo img {
+  width: 36px;
+}
+
+.app-header__menu-section {
+  float: right;
+}
