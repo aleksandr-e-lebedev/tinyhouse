@@ -19,6 +19,7 @@ export const typeDefs = gql`
 
   type Mutation {
     logInWithGoogle(input: LogInWithGoogleInput!): Viewer!
+    logInWithCookie: Viewer!
     logOut: Viewer!
   }
 `;

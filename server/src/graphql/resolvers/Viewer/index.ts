@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import { promisify } from 'util';
+import { Request, Response } from 'express';
 import { IResolvers } from 'apollo-server-express';
 import { people_v1 } from 'googleapis';
 
@@ -7,6 +8,15 @@ import { Google } from '../../../lib/api';
 
 import { LogInWithGoogleArgs, GoogleUserDetails } from './types';
 import { Viewer, Database } from '../../../lib/types';
+
+const cookieOptions = {
+  httpOnly: true,
+  sameSite: true,
+  signed: true,
+  secure: process.env.NODE_ENV === 'development' ? false : true,
+};
+
+const cookieDuration = process.env.COOKIE_DURATION || 7 * 24 * 60 * 60 * 1000; // 7 days
 
 const getGoogleUserDetails = (
   user: people_v1.Schema$Person
@@ -58,7 +68,7 @@ export const viewerResolvers: IResolvers = {
     logInWithGoogle: async (
       _root: undefined,
       { input }: LogInWithGoogleArgs,
-      { db }: { db: Database }
+      { db, res }: { db: Database; res: Response }
     ): Promise<Viewer> => {
       try {
         const { user } = await Google.logIn(input.code);
@@ -104,6 +114,11 @@ export const viewerResolvers: IResolvers = {
           return { didRequest: true };
         }
 
+        res.cookie('viewer', id, {
+          ...cookieOptions,
+          maxAge: cookieDuration as number,
+        });
+
         return {
           _id: viewer._id,
           token: viewer.token,
@@ -116,8 +131,56 @@ export const viewerResolvers: IResolvers = {
         throw new Error(`Failed to log in: ${error}`);
       }
     },
-    logOut: (): Viewer => {
+    logInWithCookie: async (
+      _root: undefined,
+      _args: Record<string, unknown>,
+      { db, req, res }: { db: Database; req: Request; res: Response }
+    ): Promise<Viewer> => {
       try {
+        const { viewer: userId } = req.signedCookies as Record<
+          string,
+          string | false | undefined
+        >;
+
+        if (!userId) {
+          res.clearCookie('viewer', cookieOptions);
+          return { didRequest: true };
+        }
+
+        const token = await createXCsrfToken();
+
+        const updateResult = await db.users.findOneAndUpdate(
+          { _id: userId },
+          { $set: { token } },
+          { returnOriginal: false }
+        );
+
+        const viewer = updateResult.value;
+
+        if (!viewer) {
+          res.clearCookie('viewer', cookieOptions);
+          return { didRequest: true };
+        }
+
+        return {
+          _id: viewer._id,
+          token: viewer.token,
+          avatar: viewer.avatar,
+          walletId: viewer.walletId,
+          didRequest: true,
+        };
+      } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        throw new Error(`Failed to log in: ${error}`);
+      }
+    },
+    logOut: (
+      _root: undefined,
+      _args: Record<string, unknown>,
+      { res }: { res: Response }
+    ): Viewer => {
+      try {
+        res.clearCookie('viewer', cookieOptions);
         return { didRequest: true };
       } catch (error) {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
