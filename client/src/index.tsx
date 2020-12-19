@@ -7,8 +7,11 @@ import {
   Redirect,
 } from 'react-router-dom';
 import {
+  ApolloLink,
+  HttpLink,
   ApolloClient,
   InMemoryCache,
+  concat,
   ApolloProvider,
   useMutation,
 } from '@apollo/client';
@@ -34,9 +37,21 @@ import { Viewer } from './lib/types';
 
 import './styles/index.css';
 
+const authMiddleware = new ApolloLink((operation, forward) => {
+  operation.setContext({
+    headers: {
+      'X-CSRF-TOKEN': sessionStorage.getItem('token') || '',
+    },
+  });
+
+  return forward(operation);
+});
+
+const httpLink = new HttpLink({ uri: '/api' });
+
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  uri: '/api',
+  link: concat(authMiddleware, httpLink),
 });
 
 const initialViewer: Viewer = {
@@ -54,6 +69,12 @@ const App = () => {
     LogInWithCookieData
   >(LOG_IN_WITH_COOKIE, {
     onCompleted: (data) => {
+      if (data.logInWithCookie.token) {
+        sessionStorage.setItem('token', data.logInWithCookie.token);
+      } else {
+        sessionStorage.removeItem('token');
+      }
+
       setViewer(data.logInWithCookie);
     },
   });

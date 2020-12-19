@@ -42,8 +42,9 @@ export const Login = ({ setViewer }: Props): JSX.Element => {
     LOG_IN_WITH_GOOGLE,
     {
       onCompleted: (data) => {
-        const { id: viewerId } = data.logInWithGoogle;
+        const { token, id: viewerId } = data.logInWithGoogle;
 
+        sessionStorage.setItem('token', token as string);
         setViewer(data.logInWithGoogle);
         history.replace(`/user/${viewerId as string}`);
         displaySuccessNotification("You've successfully logged in!");
