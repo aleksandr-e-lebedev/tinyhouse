@@ -127,7 +127,7 @@ const App = () => {
           )}
         </Route>
         <Route exact path="/user/:id">
-          <User />
+          <User viewer={viewer} />
         </Route>
         <Route>
           <NotFound />
