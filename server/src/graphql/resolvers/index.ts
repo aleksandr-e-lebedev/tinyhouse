@@ -1,6 +1,6 @@
-import { IResolvers } from 'apollo-server-express';
 import merge from 'lodash.merge';
 
+import { userResolvers } from './User';
 import { viewerResolvers } from './Viewer';
 
-export const resolvers = merge(viewerResolvers) as IResolvers;
+export const resolvers = merge(userResolvers, viewerResolvers);
