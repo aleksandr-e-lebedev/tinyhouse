@@ -1,0 +1,52 @@
+.listing-details h3.ant-typography,
+.listing-details h4.ant-typography {
+  color: #1d226c;
+}
+
+.listing-details__image {
+  width: 100%;
+  height: 570px;
+  margin-bottom: 20px;
+
+  background-size: cover;
+  background-position: 50%;
+}
+
+@media (max-width: 75em) {
+  .listing-details__image {
+    height: 380px;
+  }
+}
+
+.listing-details__title.ant-typography {
+  margin-top: 5px !important;
+  margin-bottom: 5px;
+}
+
+.listing-details__title.ant-typography span {
+  color: #bfbfbf;
+  font-weight: 400;
+}
+
+.listing-details__city-address.ant-typography {
+  margin: 5px 0;
+}
+
+.listing-details__host-name {
+  display: inline-block;
+  padding-left: 10px;
+
+  position: relative;
+  top: 5px;
+
+  font-family: 'Sacramento', cursive;
+}
+
+.listing-details__section {
+  padding: 5px 0;
+  font-size: 15px;
+}
+
+.listing-details__about-items {
+  padding-bottom: 20px;
+}

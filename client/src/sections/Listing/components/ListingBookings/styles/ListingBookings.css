@@ -1,0 +1,22 @@
+.listing-bookings h3.ant-typography,
+.listing-bookings h4.ant-typography {
+  color: #1d226c;
+}
+
+.listing-bookings__section {
+  padding: 5px 0;
+  font-size: 15px;
+}
+
+.listing-bookings__item {
+  margin: 20px 0;
+}
+
+.listing-bookings__history {
+  margin-bottom: 20px;
+}
+
+.listing-bookings__history > div {
+  margin-bottom: 5px;
+  font-size: 13px;
+}
