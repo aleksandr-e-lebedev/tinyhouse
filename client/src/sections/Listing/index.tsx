@@ -2,8 +2,13 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { Col, Layout, Row } from 'antd';
+import { Dayjs } from 'dayjs';
 
-import { ListingBookings, ListingDetails } from './components';
+import {
+  ListingBookings,
+  ListingCreateBooking,
+  ListingDetails,
+} from './components';
 import { ErrorBanner, PageSkeleton } from '../../lib/components';
 
 import { PAGE_LIMIT_3, PAGE_NUMBER_1 } from '../../lib/constants';
@@ -24,6 +29,8 @@ const { Content } = Layout;
 
 export const Listing = (): JSX.Element => {
   const [bookingsPage, setBookingsPage] = useState(PAGE_NUMBER_1);
+  const [checkInDate, setCheckInDate] = useState<Dayjs | null>(null);
+  const [checkOutDate, setCheckOutDate] = useState<Dayjs | null>(null);
 
   const { id } = useParams<MatchParams>();
 
@@ -71,12 +78,25 @@ export const Listing = (): JSX.Element => {
     />
   ) : null;
 
+  const listingCreateBookingElement = listing ? (
+    <ListingCreateBooking
+      price={listing.price}
+      checkInDate={checkInDate}
+      checkOutDate={checkOutDate}
+      setCheckInDate={setCheckInDate}
+      setCheckOutDate={setCheckOutDate}
+    />
+  ) : null;
+
   return (
     <Content className="listings">
       <Row gutter={24} justify="space-between">
         <Col xs={24} lg={14}>
           {listingDetailsElement}
           {listingBookingsElement}
+        </Col>
+        <Col xs={24} lg={10}>
+          {listingCreateBookingElement}
         </Col>
       </Row>
     </Content>

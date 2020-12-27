@@ -1,0 +1,35 @@
+.listing-booking {
+  display: block;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+@media (max-width: 62em) {
+  .listing-booking {
+    padding-top: 40px;
+  }
+}
+
+.listing-booking__card {
+  width: 100%;
+  text-align: center;
+}
+
+.listing-booking__card-title.ant-typography {
+  margin-bottom: 5px;
+  color: #1d226c;
+}
+
+.listing-booking__card-title.ant-typography span {
+  color: #bfbfbf;
+  font-weight: 400;
+}
+
+.listing-booking__card-date-picker {
+  padding-bottom: 20px;
+}
+
+.listing-booking__card-cta.ant-btn {
+  display: block;
+  margin: 0 auto 10px;
+}
