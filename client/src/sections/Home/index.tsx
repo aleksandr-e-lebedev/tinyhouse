@@ -1,8 +1,19 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import { useQuery } from '@apollo/client';
 import { Col, Row, Layout, Typography } from 'antd';
 
-import { HomeHero } from './components';
+import { HomeHero, HomeListings, HomeListingsSkeleton } from './components';
+
+import { PAGE_LIMIT_4, PAGE_NUMBER_1 } from '../../lib/constants';
+import { LISTINGS } from '../../lib/graphql/queries';
+
+import {
+  Listings as ListingsData,
+  ListingsVariables,
+} from '../../lib/graphql/queries/Listings/__generated__/Listings';
+import { ListingsFilter } from '../../lib/graphql/globalTypes';
+
 import { displayErrorMessage } from '../../lib/utils';
 
 import sanFransiscoImage from './assets/san-fransisco.jpg';
@@ -14,6 +25,17 @@ const { Content } = Layout;
 const { Paragraph, Title } = Typography;
 
 export const Home = (): JSX.Element => {
+  const { loading, data } = useQuery<ListingsData, ListingsVariables>(
+    LISTINGS,
+    {
+      variables: {
+        filter: ListingsFilter.PRICE_HIGH_TO_LOW,
+        limit: PAGE_LIMIT_4,
+        page: PAGE_NUMBER_1,
+      },
+    }
+  );
+
   const history = useHistory();
 
   const handleSearch = (value: string) => {
@@ -24,6 +46,23 @@ export const Home = (): JSX.Element => {
     } else {
       void displayErrorMessage('Please enter a valid search!');
     }
+  };
+
+  const renderListingsSection = () => {
+    if (loading) {
+      return <HomeListingsSkeleton />;
+    }
+
+    if (data) {
+      return (
+        <HomeListings
+          title="Premium Listings"
+          listings={data.listings.result}
+        />
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -45,6 +84,8 @@ export const Home = (): JSX.Element => {
           Popular listings in the United States
         </Link>
       </div>
+
+      {renderListingsSection()}
 
       <div className="home__listings">
         <Title level={4} className="home__listings-title">
