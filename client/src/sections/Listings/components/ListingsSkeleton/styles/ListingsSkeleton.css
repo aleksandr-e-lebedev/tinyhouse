@@ -1,0 +1,8 @@
+.listings-skeleton__card.ant-card {
+  margin: 5px 0;
+}
+
+.listings-skeleton__card-cover-img {
+  height: 195px;
+  background-image: url(../../../assets/listing-loading-card-cover.jpg);
+}
