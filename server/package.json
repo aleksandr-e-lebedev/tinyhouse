@@ -38,7 +38,8 @@
     "googleapis": "65.0.0",
     "graphql": "14.7.0",
     "lodash.merge": "4.6.2",
-    "mongodb": "3.6.3"
+    "mongodb": "3.6.3",
+    "stripe": "8.129.0"
   },
   "devDependencies": {
     "@tsconfig/node12": "1.0.7",
