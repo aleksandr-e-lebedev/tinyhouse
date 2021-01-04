@@ -4,10 +4,16 @@ import { Request, Response } from 'express';
 import { IResolvers } from 'apollo-server-express';
 import { people_v1 } from 'googleapis';
 
-import { Google } from '../../../lib/api';
+import { Google, Stripe } from '../../../lib/api';
 
-import { LogInWithGoogleArgs, GoogleUserDetails } from './types';
+import {
+  LogInWithGoogleArgs,
+  ConnectStripeArgs,
+  GoogleUserDetails,
+} from './types';
 import { Viewer, Database } from '../../../lib/types';
+
+import { authorize } from '../../../lib/utils';
 
 const cookieOptions = {
   httpOnly: true,
@@ -61,6 +67,30 @@ export const viewerResolvers: IResolvers = {
       } catch (error) {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         throw new Error(`Failed to query Google Auth URL': ${error}`);
+      }
+    },
+    stripeAuthUrl: async (
+      _root: undefined,
+      _args: Record<string, unknown>,
+      { db, req, res }: { db: Database; req: Request; res: Response }
+    ): Promise<string> => {
+      try {
+        const viewer = await authorize(db, req, res);
+
+        if (!viewer) {
+          throw new Error('Viewer cannot be found');
+        }
+
+        if (viewer.walletId) {
+          throw new Error("Viewer's Stripe account has already been connected");
+        }
+
+        const authUrl = Stripe.getAuthUrl();
+
+        return authUrl;
+      } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        throw new Error(`Failed to retrieve Stripe OAuth link URL: ${error}`);
       }
     },
   },
@@ -185,6 +215,54 @@ export const viewerResolvers: IResolvers = {
       } catch (error) {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         throw new Error(`Failed to log out: ${error}`);
+      }
+    },
+    connectStripe: async (
+      _root: undefined,
+      { input }: ConnectStripeArgs,
+      { db, req, res }: { db: Database; req: Request; res: Response }
+    ): Promise<Viewer> => {
+      try {
+        let viewer = await authorize(db, req, res);
+
+        if (!viewer) {
+          throw new Error('Viewer cannot be found');
+        }
+
+        if (viewer.walletId) {
+          throw new Error("Viewer's Stripe account has already been connected");
+        }
+
+        const response = await Stripe.connect(input.code);
+
+        if (!response || !response.stripe_user_id) {
+          throw new Error('Stripe grant error');
+        }
+
+        const updateResult = await db.users.findOneAndUpdate(
+          { _id: viewer._id },
+          { $set: { walletId: response.stripe_user_id } },
+          { returnOriginal: false }
+        );
+
+        const updatedViewer = updateResult.value;
+
+        if (!updatedViewer) {
+          throw new Error('Viewer could not be updated');
+        }
+
+        viewer = updatedViewer;
+
+        return {
+          _id: viewer._id,
+          token: viewer.token,
+          avatar: viewer.avatar,
+          walletId: viewer.walletId,
+          didRequest: true,
+        };
+      } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        throw new Error(`Failed to connect with Stripe: ${error}`);
       }
     },
   },

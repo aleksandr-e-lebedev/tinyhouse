@@ -4,6 +4,12 @@ export interface LogInWithGoogleArgs {
   };
 }
 
+export interface ConnectStripeArgs {
+  input: {
+    code: string;
+  };
+}
+
 export interface GoogleUserDetails {
   id: string;
   name: string;

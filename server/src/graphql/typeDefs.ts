@@ -70,8 +70,13 @@ export const typeDefs = gql`
     code: String!
   }
 
+  input ConnectStripeInput {
+    code: String!
+  }
+
   type Query {
     googleAuthUrl: String!
+    stripeAuthUrl: String!
     user(id: ID!): User!
     listing(id: ID!): Listing!
     listings(
@@ -86,5 +91,6 @@ export const typeDefs = gql`
     logInWithGoogle(input: LogInWithGoogleInput!): Viewer!
     logInWithCookie: Viewer!
     logOut: Viewer!
+    connectStripe(input: ConnectStripeInput!): Viewer!
   }
 `;
