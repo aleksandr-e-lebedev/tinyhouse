@@ -27,4 +27,14 @@ export const Stripe = {
 
     return response;
   },
+  disconnect: async (
+    stripeUserId: string
+  ): Promise<stripe.OAuthDeauthorization> => {
+    const response = await client.oauth.deauthorize({
+      client_id: `${process.env.STRIPE_CLIENT_ID as string}`,
+      stripe_user_id: stripeUserId,
+    });
+
+    return response;
+  },
 };

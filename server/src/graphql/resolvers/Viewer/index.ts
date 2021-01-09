@@ -265,6 +265,58 @@ export const viewerResolvers: IResolvers = {
         throw new Error(`Failed to connect with Stripe: ${error}`);
       }
     },
+    disconnectStripe: async (
+      _root: undefined,
+      _args: Record<string, unknown>,
+      { db, req, res }: { db: Database; req: Request; res: Response }
+    ): Promise<Viewer> => {
+      try {
+        let viewer = await authorize(db, req, res);
+
+        if (!viewer) {
+          throw new Error('Viewer cannot be found');
+        }
+
+        if (!viewer.walletId) {
+          throw new Error('Stripe account has not been created yet');
+        }
+
+        const response = await Stripe.disconnect(viewer.walletId);
+
+        if (
+          !response ||
+          !response.stripe_user_id ||
+          response.stripe_user_id !== viewer.walletId
+        ) {
+          throw new Error('Stripe disconnect error');
+        }
+
+        const updateResult = await db.users.findOneAndUpdate(
+          { _id: viewer._id },
+          { $set: { walletId: null } },
+          { returnOriginal: false }
+        );
+
+        const updatedViewer = updateResult.value;
+
+        if (!updatedViewer) {
+          throw new Error('Viewer could not be updated');
+        }
+
+        viewer = updatedViewer;
+
+        return {
+          _id: viewer._id,
+          token: viewer.token,
+          avatar: viewer.avatar,
+          walletId: viewer.walletId,
+          didRequest: true,
+        };
+      } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        throw new Error(`Failed to disconnect from Stripe: ${error}`);
+      }
+    },
   },
   Viewer: {
     id: (viewer: Viewer): string | undefined => {

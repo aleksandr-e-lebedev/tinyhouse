@@ -92,5 +92,6 @@ export const typeDefs = gql`
     logInWithCookie: Viewer!
     logOut: Viewer!
     connectStripe(input: ConnectStripeInput!): Viewer!
+    disconnectStripe: Viewer!
   }
 `;
