@@ -24,6 +24,7 @@ import {
   Listing,
   Listings,
   Login,
+  Stripe,
   User,
   NotFound,
 } from './sections';
@@ -125,6 +126,9 @@ const App = () => {
           ) : (
             <Login setViewer={setViewer} />
           )}
+        </Route>
+        <Route exact path="/stripe">
+          <Stripe viewer={viewer} setViewer={setViewer} />
         </Route>
         <Route exact path="/user/:id">
           <User viewer={viewer} />
