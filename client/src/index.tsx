@@ -131,7 +131,7 @@ const App = () => {
           <Stripe viewer={viewer} setViewer={setViewer} />
         </Route>
         <Route exact path="/user/:id">
-          <User viewer={viewer} />
+          <User viewer={viewer} setViewer={setViewer} />
         </Route>
         <Route>
           <NotFound />

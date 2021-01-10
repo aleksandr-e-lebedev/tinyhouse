@@ -1,14 +1,18 @@
 import React from 'react';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient, useMutation } from '@apollo/client';
 import { Avatar, Button, Card, Divider, Tag, Typography } from 'antd';
 
 import { STRIPE_AUTH_URL } from '../../../../lib/graphql/queries';
+import { DISCONNECT_STRIPE } from '../../../../lib/graphql/mutations';
 
 import { StripeAuthUrl as StripeAuthUrlData } from '../../../../lib/graphql/queries/StripeAuthUrl/__generated__/StripeAuthUrl';
 import { User as UserData } from '../../../../lib/graphql/queries/User/__generated__/User';
+import { DisconnectStripe as DisconnectStripeData } from '../../../../lib/graphql/mutations/DisconnectStripe/__generated__/DisconnectStripe';
+import { Viewer } from '../../../../lib/types';
 
 import {
   formatListingPrice as formatUserIncome,
+  displaySuccessNotification,
   displayErrorMessage,
 } from '../../../../lib/utils';
 
@@ -16,13 +20,43 @@ import './styles/UserProfile.css';
 
 interface Props {
   user: UserData['user'];
+  viewer: Viewer;
   viewerIsUser: boolean;
+  setViewer: (viewer: Viewer) => void;
+  refetchUser: () => Promise<void>;
 }
 
 const { Paragraph, Text, Title } = Typography;
 
-export const UserProfile = ({ user, viewerIsUser }: Props): JSX.Element => {
+export const UserProfile = ({
+  user,
+  viewer,
+  viewerIsUser,
+  setViewer,
+  refetchUser,
+}: Props): JSX.Element => {
   const client = useApolloClient();
+
+  const [disconnectStripe, { loading }] = useMutation<DisconnectStripeData>(
+    DISCONNECT_STRIPE,
+    {
+      onCompleted: (data) => {
+        const { hasWallet } = data.disconnectStripe;
+
+        setViewer({ ...viewer, hasWallet });
+        displaySuccessNotification(
+          "You've successfully disconnected from Stripe!",
+          "You'll have to reconnect with Stripe to continue to create listings."
+        );
+        void refetchUser();
+      },
+      onError: () => {
+        void displayErrorMessage(
+          "Sorry! We weren't able to disconnect you from Stripe. Please try again later!"
+        );
+      },
+    }
+  );
 
   const handleConnectWithStripe = async () => {
     try {
@@ -46,6 +80,19 @@ export const UserProfile = ({ user, viewerIsUser }: Props): JSX.Element => {
       <Paragraph>
         Income Earned:{' '}
         <Text strong>{user.income ? formatUserIncome(user.income) : `$0`}</Text>
+      </Paragraph>
+      <Button
+        type="primary"
+        className="user-profile__details-cta"
+        loading={loading}
+        onClick={() => disconnectStripe()}
+      >
+        Disconnect Stripe
+      </Button>
+      <Paragraph type="secondary">
+        By disconnecting, you won&apos;t be able to receive{' '}
+        <Text strong>any further payments</Text>. This will prevent users from
+        booking listings that you might have already created.
       </Paragraph>
     </>
   ) : (
