@@ -12,10 +12,32 @@ import {
   ListingsData,
   ListingsFilter,
   ListingsQuery,
+  HostListingInput,
+  HostListingArgs,
 } from './types';
-import { Database, Listing, User } from '../../../lib/types';
+import { Database, Listing, ListingType, User } from '../../../lib/types';
 
 import { authorize } from '../../../lib/utils';
+
+const verifyHostListingInput = (input: HostListingInput) => {
+  const { title, description, type, price } = input;
+
+  if (title.length > 100) {
+    throw new Error('Listing title must be under 100 characters');
+  }
+
+  if (description.length > 5000) {
+    throw new Error('Listing description must be under 5000 characters');
+  }
+
+  if (type !== ListingType.APARTMENT && type !== ListingType.HOUSE) {
+    throw new Error('Listing type must be either an apartment or house');
+  }
+
+  if (price < 0) {
+    throw new Error('Price of the listing must be greater than 0');
+  }
+};
 
 export const listingResolvers: IResolvers = {
   Query: {
@@ -90,6 +112,56 @@ export const listingResolvers: IResolvers = {
       } catch (error) {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         throw new Error(`Failed to query listings: ${error}`);
+      }
+    },
+  },
+  Mutation: {
+    hostListing: async (
+      _root: undefined,
+      { input }: HostListingArgs,
+      { db, req, res }: { db: Database; req: Request; res: Response }
+    ): Promise<Listing> => {
+      try {
+        const viewer = await authorize(db, req, res);
+
+        if (!viewer) {
+          throw new Error('Viewer cannot be found');
+        }
+
+        if (!viewer.walletId) {
+          throw new Error('Viewer is not connected with Stripe');
+        }
+
+        verifyHostListingInput(input);
+
+        const { country, admin, city } = await Google.geocode(input.address);
+
+        if (!country || !admin || !city) {
+          throw new Error('Invalid address input');
+        }
+
+        const insertResult = await db.listings.insertOne({
+          _id: new ObjectId(),
+          ...input,
+          host: viewer._id,
+          country,
+          admin,
+          city,
+          bookings: [],
+          bookingsIndex: {},
+        });
+
+        const insertedListing: Listing = insertResult.ops[0];
+
+        await db.users.updateOne(
+          { _id: viewer._id },
+          { $push: { listings: insertedListing._id } }
+        );
+
+        return insertedListing;
+      } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        throw new Error(`Failed to host new listing: ${error}`);
       }
     },
   },
