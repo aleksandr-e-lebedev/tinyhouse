@@ -7,3 +7,6 @@ export const PAGE_LIMIT_4 = 4;
 export const PAGE_LIMIT_3 = 3;
 
 export const PAGE_NUMBER_1 = 1;
+
+// Data size
+export const ONE_MB = 1;

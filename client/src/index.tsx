@@ -112,7 +112,7 @@ const App = () => {
           <Home />
         </Route>
         <Route exact path="/host">
-          <Host />
+          <Host viewer={viewer} />
         </Route>
         <Route exact path="/listing/:id">
           <Listing />
