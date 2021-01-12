@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import { useMutation } from '@apollo/client';
 import {
   Button,
   Form,
@@ -19,16 +20,37 @@ import {
 } from '@ant-design/icons';
 
 import { ANTD_ICON_COLOR, ONE_MB } from '../../lib/constants';
+import { HOST_LISTING } from '../../lib/graphql/mutations';
 
+import {
+  HostListing as HostListingData,
+  HostListingVariables,
+} from '../../lib/graphql/mutations/HostListing/__generated__/HostListing';
 import { ListingType } from '../../lib/graphql/globalTypes';
 import { Viewer } from '../../lib/types';
 
-import { displayErrorMessage } from '../../lib/utils';
+import {
+  displaySuccessNotification,
+  displayErrorMessage,
+} from '../../lib/utils';
 
 import './styles/Host.css';
 
 interface Props {
   viewer: Viewer;
+}
+
+interface FormValues {
+  address: string;
+  city: string;
+  description: string;
+  image: string;
+  numOfGuests: number;
+  postalCode: string;
+  price: number;
+  state: string;
+  title: string;
+  type: ListingType;
 }
 
 interface DummyRequestOptions {
@@ -84,6 +106,22 @@ export const Host = ({ viewer }: Props): JSX.Element => {
   const [imageLoading, setImageLoading] = useState(false);
   const [imageUrlInBase64, setImageUrlInBase64] = useState<string | null>(null);
 
+  const [form] = Form.useForm<FormValues>();
+
+  const [hostListing, { loading, data }] = useMutation<
+    HostListingData,
+    HostListingVariables
+  >(HOST_LISTING, {
+    onCompleted: () => {
+      displaySuccessNotification("You've successfully created your listing!");
+    },
+    onError: () => {
+      void displayErrorMessage(
+        "Sorry! We weren't able to create your listing. Please try again later."
+      );
+    },
+  });
+
   const handleImageUpload = (info: UploadChangeParam) => {
     const { file } = info;
 
@@ -98,6 +136,30 @@ export const Host = ({ viewer }: Props): JSX.Element => {
         setImageLoading(false);
       });
     }
+  };
+
+  const handleHostListing = (values: FormValues) => {
+    const fullAddress = `${values.address}, ${values.city}, ${values.state}, ${values.postalCode}`;
+
+    const input: HostListingVariables['input'] = {
+      title: values.title,
+      description: values.description,
+      image: imageUrlInBase64 as string,
+      type: values.type,
+      address: fullAddress,
+      price: values.price * 100,
+      numOfGuests: values.numOfGuests,
+    };
+
+    void hostListing({
+      variables: {
+        input,
+      },
+    });
+  };
+
+  const handleHostListingFailure = () => {
+    void displayErrorMessage('Please complete all required form fields!');
   };
 
   if (!viewer.id || !viewer.hasWallet) {
@@ -119,9 +181,31 @@ export const Host = ({ viewer }: Props): JSX.Element => {
     );
   }
 
+  if (loading) {
+    return (
+      <Content className="host">
+        <div className="host__form-header">
+          <Title level={3} className="host__form-title">
+            Please wait!
+          </Title>
+          <Text type="secondary">We&apos;re creating your listing now.</Text>
+        </div>
+      </Content>
+    );
+  }
+
+  if (data && data.hostListing) {
+    return <Redirect to={`/listing/${data.hostListing.id}`} />;
+  }
+
   return (
     <Content className="host">
-      <Form layout="vertical">
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={handleHostListing}
+        onFinishFailed={handleHostListingFailure}
+      >
         <div className="host__form-header">
           <Title level={3} className="host__form-title">
             Hi! Let&apos;s get started listing your place.
@@ -132,7 +216,11 @@ export const Host = ({ viewer }: Props): JSX.Element => {
           </Text>
         </div>
 
-        <Item label="Home Type">
+        <Item
+          name="type"
+          label="Home Type"
+          rules={[{ required: true, message: 'Please select a home type!' }]}
+        >
           <Radio.Group>
             <Radio.Button value={ListingType.APARTMENT}>
               <BankOutlined style={{ color: ANTD_ICON_COLOR }} />{' '}
@@ -145,18 +233,44 @@ export const Host = ({ viewer }: Props): JSX.Element => {
           </Radio.Group>
         </Item>
 
-        <Item label="Max # of Guests">
+        <Item
+          name="numOfGuests"
+          label="Max # of Guests"
+          rules={[
+            { required: true, message: 'Please enter a max number of guests!' },
+          ]}
+        >
           <InputNumber min={1} placeholder="4" />
         </Item>
 
-        <Item label="Title" extra="Max character count of 45">
+        <Item
+          name="title"
+          label="Title"
+          extra="Max character count of 45"
+          rules={[
+            {
+              required: true,
+              message: 'Please enter a title for your listing!',
+            },
+          ]}
+        >
           <Input
             maxLength={45}
             placeholder="The iconic and luxurious Bel-Air mansion"
           />
         </Item>
 
-        <Item label="Description of listing" extra="Max character count of 400">
+        <Item
+          name="description"
+          label="Description of listing"
+          extra="Max character count of 400"
+          rules={[
+            {
+              required: true,
+              message: 'Please enter a description for your listing!',
+            },
+          ]}
+        >
           <Input.TextArea
             rows={3}
             maxLength={400}
@@ -164,25 +278,68 @@ export const Host = ({ viewer }: Props): JSX.Element => {
           />
         </Item>
 
-        <Item label="Address">
+        <Item
+          name="address"
+          label="Address"
+          rules={[
+            {
+              required: true,
+              message: 'Please enter an address for your listing!',
+            },
+          ]}
+        >
           <Input placeholder="251 North Bristol Avenue" />
         </Item>
 
-        <Item label="City/Town">
+        <Item
+          name="city"
+          label="City/Town"
+          rules={[
+            {
+              required: true,
+              message: 'Please enter a city (or region) for your listing!',
+            },
+          ]}
+        >
           <Input placeholder="Los Angeles" />
         </Item>
 
-        <Item label="State/Province">
+        <Item
+          name="state"
+          label="State/Province"
+          rules={[
+            {
+              required: true,
+              message: 'Please enter a state (or province) for your listing!',
+            },
+          ]}
+        >
           <Input placeholder="California" />
         </Item>
 
-        <Item label="Zip/Postal Code">
+        <Item
+          name="postalCode"
+          label="Zip/Postal Code"
+          rules={[
+            {
+              required: true,
+              message: 'Please enter a zip (or postal) code for your listing!',
+            },
+          ]}
+        >
           <Input placeholder="Please enter a zip code for your listing!" />
         </Item>
 
         <Item
+          name="image"
           label="Image"
           extra="Images have to be under 1MB in size and of type JPG or PNG"
+          rules={[
+            {
+              required: true,
+              message: 'Please provide an image for your listing!',
+            },
+          ]}
         >
           <div className="host__form-image-upload">
             <Upload
@@ -205,12 +362,24 @@ export const Host = ({ viewer }: Props): JSX.Element => {
           </div>
         </Item>
 
-        <Item label="Price" extra="All prices in $USD/day">
+        <Item
+          name="price"
+          label="Price"
+          extra="All prices in $USD/day"
+          rules={[
+            {
+              required: true,
+              message: 'Please enter a price for your listing!',
+            },
+          ]}
+        >
           <InputNumber min={0} placeholder="120" />
         </Item>
 
         <Item>
-          <Button type="primary">Submit</Button>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
         </Item>
       </Form>
     </Content>
