@@ -18,10 +18,15 @@ const mount = async (app: Application) => {
     context: ({ req, res }) => ({ db, req, res }),
   });
 
-  server.applyMiddleware({ app, path: '/api' });
-  app.listen(port);
+  server.applyMiddleware({
+    app,
+    path: '/api',
+    bodyParserConfig: { limit: '2mb' },
+  });
 
-  console.log(`[app]: http://localhost:${port}`);
+  app.listen(port, () => {
+    console.log(`[app]: http://localhost:${port}`);
+  });
 };
 
 void mount(express());
