@@ -84,6 +84,13 @@ export const typeDefs = gql`
     numOfGuests: Int!
   }
 
+  input CreateBookingInput {
+    listingId: ID!
+    source: String!
+    checkIn: String!
+    checkOut: String!
+  }
+
   type Query {
     googleAuthUrl: String!
     stripeAuthUrl: String!
@@ -104,5 +111,6 @@ export const typeDefs = gql`
     connectStripe(input: ConnectStripeInput!): Viewer!
     disconnectStripe: Viewer!
     hostListing(input: HostListingInput!): Listing!
+    createBooking(input: CreateBookingInput!): Booking!
   }
 `;
