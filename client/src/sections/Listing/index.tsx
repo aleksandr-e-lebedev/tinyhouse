@@ -18,8 +18,13 @@ import {
   Listing as ListingData,
   ListingVariables,
 } from '../../lib/graphql/queries/Listing/__generated__/Listing';
+import { Viewer } from '../../lib/types';
 
 import './styles/Listing.css';
+
+interface Props {
+  viewer: Viewer;
+}
 
 interface MatchParams {
   id: string;
@@ -27,7 +32,7 @@ interface MatchParams {
 
 const { Content } = Layout;
 
-export const Listing = (): JSX.Element => {
+export const Listing = ({ viewer }: Props): JSX.Element => {
   const [bookingsPage, setBookingsPage] = useState(PAGE_NUMBER_1);
   const [checkInDate, setCheckInDate] = useState<Dayjs | null>(null);
   const [checkOutDate, setCheckOutDate] = useState<Dayjs | null>(null);
@@ -80,7 +85,10 @@ export const Listing = (): JSX.Element => {
 
   const listingCreateBookingElement = listing ? (
     <ListingCreateBooking
+      viewer={viewer}
+      host={listing.host}
       price={listing.price}
+      bookingsIndex={listing.bookingsIndex}
       checkInDate={checkInDate}
       checkOutDate={checkOutDate}
       setCheckInDate={setCheckInDate}

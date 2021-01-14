@@ -115,7 +115,7 @@ const App = () => {
           <Host viewer={viewer} />
         </Route>
         <Route exact path="/listing/:id">
-          <Listing />
+          <Listing viewer={viewer} />
         </Route>
         <Route exact path="/listings/:location?">
           <Listings />
