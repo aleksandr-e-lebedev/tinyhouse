@@ -7,6 +7,7 @@ import { Dayjs } from 'dayjs';
 import {
   ListingBookings,
   ListingCreateBooking,
+  ListingCreateBookingModal,
   ListingDetails,
 } from './components';
 import { ErrorBanner, PageSkeleton } from '../../lib/components';
@@ -36,19 +37,30 @@ export const Listing = ({ viewer }: Props): JSX.Element => {
   const [bookingsPage, setBookingsPage] = useState(PAGE_NUMBER_1);
   const [checkInDate, setCheckInDate] = useState<Dayjs | null>(null);
   const [checkOutDate, setCheckOutDate] = useState<Dayjs | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const { id } = useParams<MatchParams>();
 
-  const { loading, error, data } = useQuery<ListingData, ListingVariables>(
-    LISTING,
-    {
-      variables: {
-        id,
-        limit: PAGE_LIMIT_3,
-        page: bookingsPage,
-      },
-    }
-  );
+  const { loading, error, data, refetch } = useQuery<
+    ListingData,
+    ListingVariables
+  >(LISTING, {
+    variables: {
+      id,
+      limit: PAGE_LIMIT_3,
+      page: bookingsPage,
+    },
+  });
+
+  const clearBookingData = () => {
+    setModalVisible(false);
+    setCheckInDate(null);
+    setCheckOutDate(null);
+  };
+
+  const refetchListing = async () => {
+    await refetch();
+  };
 
   if (loading) {
     return (
@@ -93,8 +105,23 @@ export const Listing = ({ viewer }: Props): JSX.Element => {
       checkOutDate={checkOutDate}
       setCheckInDate={setCheckInDate}
       setCheckOutDate={setCheckOutDate}
+      setModalVisible={setModalVisible}
     />
   ) : null;
+
+  const listingCreateBookingModalElement =
+    listing && checkInDate && checkOutDate ? (
+      <ListingCreateBookingModal
+        listingId={listing.id}
+        listingPrice={listing.price}
+        modalVisible={modalVisible}
+        checkInDate={checkInDate}
+        checkOutDate={checkOutDate}
+        setModalVisible={setModalVisible}
+        clearBookingData={clearBookingData}
+        refetchListing={refetchListing}
+      />
+    ) : null;
 
   return (
     <Content className="listings">
@@ -107,6 +134,7 @@ export const Listing = ({ viewer }: Props): JSX.Element => {
           {listingCreateBookingElement}
         </Col>
       </Row>
+      {listingCreateBookingModalElement}
     </Content>
   );
 };

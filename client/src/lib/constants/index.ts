@@ -10,3 +10,6 @@ export const PAGE_NUMBER_1 = 1;
 
 // Data size
 export const ONE_MB = 1;
+
+// Dates and times
+export const ONE_DAY = 1;

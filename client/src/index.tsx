@@ -15,6 +15,8 @@ import {
   ApolloProvider,
   useMutation,
 } from '@apollo/client';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements as StripeElements } from '@stripe/react-stripe-js';
 import { Affix, Spin, Layout } from 'antd';
 
 import {
@@ -54,6 +56,10 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
   link: concat(authMiddleware, httpLink),
 });
+
+const stripePromise = loadStripe(
+  process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY as string
+);
 
 const initialViewer: Viewer = {
   id: null,
@@ -143,11 +149,13 @@ const App = () => {
 
 render(
   <ApolloProvider client={client}>
-    <Router>
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
-    </Router>
+    <StripeElements stripe={stripePromise}>
+      <Router>
+        <React.StrictMode>
+          <App />
+        </React.StrictMode>
+      </Router>
+    </StripeElements>
   </ApolloProvider>,
   document.getElementById('root')
 );

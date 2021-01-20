@@ -21,6 +21,7 @@ interface Props {
   checkOutDate: Dayjs | null;
   setCheckInDate: (checkInDate: Dayjs | null) => void;
   setCheckOutDate: (checkOutDate: Dayjs | null) => void;
+  setModalVisible: (modalVisible: boolean) => void;
 }
 
 const { Paragraph, Text, Title } = Typography;
@@ -34,6 +35,7 @@ export const ListingCreateBooking = ({
   checkOutDate,
   setCheckInDate,
   setCheckOutDate,
+  setModalVisible,
 }: Props): JSX.Element => {
   const bookingsIndexInJson: BookingsIndex = JSON.parse(
     bookingsIndex
@@ -180,6 +182,7 @@ export const ListingCreateBooking = ({
           size="large"
           type="primary"
           className="listing-booking__card-cta"
+          onClick={() => setModalVisible(true)}
         >
           Request to book!
         </Button>

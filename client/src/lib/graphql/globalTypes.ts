@@ -21,6 +21,13 @@ export interface ConnectStripeInput {
   code: string;
 }
 
+export interface CreateBookingInput {
+  listingId: string;
+  source: string;
+  checkIn: string;
+  checkOut: string;
+}
+
 export interface HostListingInput {
   title: string;
   description: string;
