@@ -33,6 +33,7 @@ export const Home = (): JSX.Element => {
         limit: PAGE_LIMIT_4,
         page: PAGE_NUMBER_1,
       },
+      fetchPolicy: 'cache-and-network',
     }
   );
 
