@@ -43,6 +43,7 @@ export const User = ({ viewer, setViewer }: Props): JSX.Element => {
         bookingsPage,
         listingsPage,
       },
+      fetchPolicy: 'cache-and-network',
     }
   );
 
