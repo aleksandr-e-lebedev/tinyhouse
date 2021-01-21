@@ -15,6 +15,8 @@ import {
 } from '../../lib/graphql/queries/User/__generated__/User';
 import { Viewer } from '../../lib/types';
 
+import { useScrollToTop } from '../../lib/hooks';
+
 import './styles/User.css';
 
 interface Props {
@@ -46,6 +48,8 @@ export const User = ({ viewer, setViewer }: Props): JSX.Element => {
       fetchPolicy: 'cache-and-network',
     }
   );
+
+  useScrollToTop();
 
   const refetchUser = async () => {
     await refetch();

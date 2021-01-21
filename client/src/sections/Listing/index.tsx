@@ -21,6 +21,8 @@ import {
 } from '../../lib/graphql/queries/Listing/__generated__/Listing';
 import { Viewer } from '../../lib/types';
 
+import { useScrollToTop } from '../../lib/hooks';
+
 import './styles/Listing.css';
 
 interface Props {
@@ -51,6 +53,8 @@ export const Listing = ({ viewer }: Props): JSX.Element => {
       page: bookingsPage,
     },
   });
+
+  useScrollToTop();
 
   const clearBookingData = () => {
     setModalVisible(false);

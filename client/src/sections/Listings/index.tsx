@@ -19,6 +19,8 @@ import {
 } from '../../lib/graphql/queries/Listings/__generated__/Listings';
 import { ListingsFilter } from '../../lib/graphql/globalTypes';
 
+import { useScrollToTop } from '../../lib/hooks';
+
 import './styles/Listings.css';
 
 interface MatchParams {
@@ -47,6 +49,8 @@ export const Listings = (): JSX.Element => {
       },
     }
   );
+
+  useScrollToTop();
 
   useEffect(() => {
     locationRef.current = location;

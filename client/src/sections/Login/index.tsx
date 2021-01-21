@@ -15,6 +15,7 @@ import {
 } from '../../lib/graphql/mutations/LogInWithGoogle/__generated__/LogInWithGoogle';
 import { Viewer } from '../../lib/types';
 
+import { useScrollToTop } from '../../lib/hooks';
 import {
   displaySuccessNotification,
   displayErrorMessage,
@@ -53,6 +54,8 @@ export const Login = ({ setViewer }: Props): JSX.Element => {
   );
 
   const logInRef = useRef(logInWithGoogle);
+
+  useScrollToTop();
 
   useEffect(() => {
     const code = new URL(window.location.href).searchParams.get('code');

@@ -29,6 +29,7 @@ import {
 import { ListingType } from '../../lib/graphql/globalTypes';
 import { Viewer } from '../../lib/types';
 
+import { useScrollToTop } from '../../lib/hooks';
 import {
   displaySuccessNotification,
   displayErrorMessage,
@@ -121,6 +122,8 @@ export const Host = ({ viewer }: Props): JSX.Element => {
       );
     },
   });
+
+  useScrollToTop();
 
   const handleImageUpload = (info: UploadChangeParam) => {
     const { file } = info;

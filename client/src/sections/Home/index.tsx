@@ -14,6 +14,7 @@ import {
 } from '../../lib/graphql/queries/Listings/__generated__/Listings';
 import { ListingsFilter } from '../../lib/graphql/globalTypes';
 
+import { useScrollToTop } from '../../lib/hooks';
 import { displayErrorMessage } from '../../lib/utils';
 
 import sanFransiscoImage from './assets/san-fransisco.jpg';
@@ -36,6 +37,8 @@ export const Home = (): JSX.Element => {
       fetchPolicy: 'cache-and-network',
     }
   );
+
+  useScrollToTop();
 
   const history = useHistory();
 
