@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/aleksandr-e-lebedev/tinyhouse#readme",
   "dependencies": {
-    "@googlemaps/google-maps-services-js": "3.1.13",
+    "@googlemaps/google-maps-services-js": "3.1.16",
     "apollo-server-express": "2.18.2",
     "cloudinary": "1.23.0",
     "cookie-parser": "1.4.5",
