@@ -13,16 +13,16 @@ import {
 } from './types';
 import { Viewer, Database } from '../../../lib/types';
 
-import { authorize } from '../../../lib/utils';
+import { createJwt, getJwtPayload, authorize } from '../../../lib/utils';
 
-const cookieOptions = {
+const jwtCookieOptions = {
   httpOnly: true,
   sameSite: true,
-  signed: true,
   secure: process.env.NODE_ENV === 'development' ? false : true,
 };
 
-const cookieDuration = process.env.COOKIE_DURATION || 7 * 24 * 60 * 60 * 1000; // 7 days
+const jwtCookieDuration =
+  process.env.JWT_COOKIE_DURATION || 7 * 24 * 60 * 60 * 1000; // 7 days
 
 const getGoogleUserDetails = (
   user: people_v1.Schema$Person
@@ -144,9 +144,11 @@ export const viewerResolvers: IResolvers = {
           return { didRequest: true };
         }
 
-        res.cookie('viewer', id, {
-          ...cookieOptions,
-          maxAge: cookieDuration as number,
+        const jwt = await createJwt(viewer._id);
+
+        res.cookie('jwt', jwt, {
+          ...jwtCookieOptions,
+          maxAge: jwtCookieDuration as number,
         });
 
         return {
@@ -167,20 +169,18 @@ export const viewerResolvers: IResolvers = {
       { db, req, res }: { db: Database; req: Request; res: Response }
     ): Promise<Viewer> => {
       try {
-        const { viewer: userId } = req.signedCookies as Record<
-          string,
-          string | false | undefined
-        >;
+        const { jwt } = req.cookies as Record<string, string | undefined>;
 
-        if (!userId) {
-          res.clearCookie('viewer', cookieOptions);
+        if (!jwt) {
+          res.clearCookie('jwt', jwtCookieOptions);
           return { didRequest: true };
         }
 
+        const { viewerId } = await getJwtPayload(jwt);
         const token = await createXCsrfToken();
 
         const updateResult = await db.users.findOneAndUpdate(
-          { _id: userId },
+          { _id: viewerId },
           { $set: { token } },
           { returnOriginal: false }
         );
@@ -188,7 +188,7 @@ export const viewerResolvers: IResolvers = {
         const viewer = updateResult.value;
 
         if (!viewer) {
-          res.clearCookie('viewer', cookieOptions);
+          res.clearCookie('jwt', jwtCookieOptions);
           return { didRequest: true };
         }
 
@@ -210,7 +210,7 @@ export const viewerResolvers: IResolvers = {
       { res }: { res: Response }
     ): Viewer => {
       try {
-        res.clearCookie('viewer', cookieOptions);
+        res.clearCookie('jwt', jwtCookieOptions);
         return { didRequest: true };
       } catch (error) {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions

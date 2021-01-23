@@ -10,7 +10,7 @@ const port = process.env.PORT || 9000;
 const mount = async (app: Application) => {
   const db = await connectDatabase();
 
-  app.use(cookieParser(process.env.COOKIE_SECRET));
+  app.use(cookieParser());
 
   const server = new ApolloServer({
     typeDefs,
