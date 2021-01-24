@@ -1,13 +1,22 @@
 import express, { Application } from 'express';
+import path from 'path';
 import cookieParser from 'cookie-parser';
 import { ApolloServer } from 'apollo-server-express';
 
-import { PORT } from './config';
+import { NODE_ENV, PORT } from './config';
 import { connectDatabase } from './database';
 import { typeDefs, resolvers } from './graphql';
 
 const mount = async (app: Application) => {
   const db = await connectDatabase();
+
+  if (NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../../client/build')));
+
+    app.get('/*', (_req, res) => {
+      res.sendFile(path.join(__dirname, '../../client/build', 'index.html'));
+    });
+  }
 
   app.use(cookieParser());
 
