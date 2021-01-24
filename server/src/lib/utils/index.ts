@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { promisify } from 'util';
 import jwt, { Secret, SignOptions, VerifyOptions } from 'jsonwebtoken';
 
+import { NODE_ENV, JWT_SECRET, JWT_DURATION } from '../../config';
 import { Database, User } from '../types';
 
 interface JwtPayload {
@@ -11,15 +12,14 @@ interface JwtPayload {
 const cookieOptions = {
   httpOnly: true,
   sameSite: true,
-  secure: process.env.NODE_ENV === 'development' ? false : true,
+  secure: NODE_ENV === 'development' ? false : true,
 };
-
-const jwtSecret = process.env.JWT_SECRET as string;
-const jwtDuration = process.env.JWT_DURATION || '7d';
 
 export const createJwt = async (viewerId: string): Promise<string> => {
   const sign = promisify<JwtPayload, Secret, SignOptions, string>(jwt.sign);
-  const token = await sign({ viewerId }, jwtSecret, { expiresIn: jwtDuration });
+  const token = await sign({ viewerId }, JWT_SECRET, {
+    expiresIn: JWT_DURATION,
+  });
 
   return token;
 };
@@ -32,7 +32,7 @@ export const getJwtPayload = async (token: string): Promise<JwtPayload> => {
     JwtPayload
   >(jwt.verify);
 
-  const payload = await verify(token, jwtSecret, undefined);
+  const payload = await verify(token, JWT_SECRET, undefined);
 
   return payload;
 };

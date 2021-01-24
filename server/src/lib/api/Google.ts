@@ -6,6 +6,13 @@ import {
   GeocodingAddressComponentType,
 } from '@googlemaps/google-maps-services-js';
 
+import {
+  PUBLIC_URL,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_GEOCODING_API_KEY,
+} from '../../config';
+
 interface LogInResult {
   user: people_v1.Schema$Person;
 }
@@ -17,9 +24,9 @@ interface ParsedAddress {
 }
 
 const auth = new google.auth.OAuth2(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET,
-  `${process.env.PUBLIC_URL as string}/login`
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  `${PUBLIC_URL}/login`
 );
 
 const maps = new Client({});
@@ -70,12 +77,12 @@ export const Google = {
     return { user: data };
   },
   geocode: async (address: string): Promise<ParsedAddress> => {
-    if (!process.env.GOOGLE_GEOCODING_API_KEY) {
+    if (!GOOGLE_GEOCODING_API_KEY) {
       throw new Error('Missing Google Maps API key');
     }
 
     const res = await maps.geocode({
-      params: { address, key: process.env.GOOGLE_GEOCODING_API_KEY },
+      params: { address, key: GOOGLE_GEOCODING_API_KEY },
     });
 
     if (res.status < 200 || res.status > 299) {

@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import { IResolvers } from 'apollo-server-express';
 import { people_v1 } from 'googleapis';
 
+import { NODE_ENV, JWT_COOKIE_DURATION } from '../../../config';
 import { Google, Stripe } from '../../../lib/api';
 
 import {
@@ -18,11 +19,8 @@ import { createJwt, getJwtPayload, authorize } from '../../../lib/utils';
 const jwtCookieOptions = {
   httpOnly: true,
   sameSite: true,
-  secure: process.env.NODE_ENV === 'development' ? false : true,
+  secure: NODE_ENV === 'development' ? false : true,
 };
-
-const jwtCookieDuration =
-  process.env.JWT_COOKIE_DURATION || 7 * 24 * 60 * 60 * 1000; // 7 days
 
 const getGoogleUserDetails = (
   user: people_v1.Schema$Person
@@ -148,7 +146,7 @@ export const viewerResolvers: IResolvers = {
 
         res.cookie('jwt', jwt, {
           ...jwtCookieOptions,
-          maxAge: jwtCookieDuration as number,
+          maxAge: JWT_COOKIE_DURATION as number,
         });
 
         return {

@@ -2,10 +2,9 @@ import express, { Application } from 'express';
 import cookieParser from 'cookie-parser';
 import { ApolloServer } from 'apollo-server-express';
 
+import { PORT } from './config';
 import { connectDatabase } from './database';
 import { typeDefs, resolvers } from './graphql';
-
-const port = process.env.PORT || 9000;
 
 const mount = async (app: Application) => {
   const db = await connectDatabase();
@@ -24,8 +23,8 @@ const mount = async (app: Application) => {
     bodyParserConfig: { limit: '2mb' },
   });
 
-  app.listen(port, () => {
-    console.log(`[app]: http://localhost:${port}`);
+  app.listen(PORT, () => {
+    console.log(`[app]: http://localhost:${PORT}`);
   });
 };
 

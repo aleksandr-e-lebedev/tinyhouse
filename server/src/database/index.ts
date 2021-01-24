@@ -1,11 +1,13 @@
 import { MongoClient } from 'mongodb';
 
+import { DB_URL } from '../config';
 import { Database, Booking, Listing, User } from '../lib/types';
 
-const url = process.env.DB_URL as string;
-
 export const connectDatabase = async (): Promise<Database> => {
-  const client = await MongoClient.connect(url, { useUnifiedTopology: true });
+  const client = await MongoClient.connect(DB_URL, {
+    useUnifiedTopology: true,
+  });
+
   const db = client.db('main');
 
   return {

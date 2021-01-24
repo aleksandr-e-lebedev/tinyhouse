@@ -1,7 +1,9 @@
 import { URLSearchParams } from 'url';
 import stripe from 'stripe';
 
-const client = new stripe(process.env.STRIPE_API_SECRET as string, {
+import { PUBLIC_URL, STRIPE_CLIENT_ID, STRIPE_API_SECRET } from '../../config';
+
+const client = new stripe(STRIPE_API_SECRET as string, {
   apiVersion: '2020-08-27',
   typescript: true,
 });
@@ -10,9 +12,9 @@ export const Stripe = {
   getAuthUrl: (): string => {
     const args = new URLSearchParams({
       response_type: 'code',
-      client_id: process.env.STRIPE_CLIENT_ID,
+      client_id: STRIPE_CLIENT_ID,
       scope: 'read_write',
-      redirect_uri: `${process.env.PUBLIC_URL as string}/stripe`,
+      redirect_uri: `${PUBLIC_URL}/stripe`,
     });
 
     const authUrl = `https://connect.stripe.com/oauth/authorize?${args.toString()}`;
