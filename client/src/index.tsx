@@ -31,6 +31,7 @@ import {
   NotFound,
 } from './sections';
 
+import { STRIPE_PUBLISHABLE_KEY } from './config';
 import { AppHeaderSkeleton, ErrorBanner } from './lib/components';
 
 import { LOG_IN_WITH_COOKIE } from './lib/graphql/mutations';
@@ -57,9 +58,7 @@ const client = new ApolloClient({
   link: concat(authMiddleware, httpLink),
 });
 
-const stripePromise = loadStripe(
-  process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY as string
-);
+const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY as string);
 
 const initialViewer: Viewer = {
   id: null,
