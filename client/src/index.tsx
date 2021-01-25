@@ -150,9 +150,7 @@ render(
   <ApolloProvider client={client}>
     <StripeElements stripe={stripePromise}>
       <Router>
-        <React.StrictMode>
-          <App />
-        </React.StrictMode>
+        <App />
       </Router>
     </StripeElements>
   </ApolloProvider>,
