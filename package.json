@@ -1,0 +1,38 @@
+{
+  "name": "tinyhouse",
+  "version": "1.0.0",
+  "description": "Home-sharing app created with React, TypeScript, and GraphQL",
+  "private": true,
+  "scripts": {
+    "install": "cd server && npm install && npm install --only=dev && cd ../client && npm install && npm install --only=dev",
+    "server": "cd server && npm run server",
+    "client": "cd client && npm start",
+    "build": "cd server && npm run build && cd ../client && npm run build",
+    "start": "cd server && npm run start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aleksandr-e-lebedev/tinyhouse.git"
+  },
+  "keywords": [
+    "React",
+    "TypeScript",
+    "GraphQL",
+    "Apollo",
+    "Ant Design",
+    "Stripe Connect",
+    "Node.js",
+    "Express",
+    "MongoDB"
+  ],
+  "author": "Aleksandr Lebedev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aleksandr-e-lebedev/tinyhouse/issues"
+  },
+  "homepage": "https://github.com/aleksandr-e-lebedev/tinyhouse#readme",
+  "engines": {
+    "node": "12.19.0",
+    "npm": "6.14.8"
+  }
+}
