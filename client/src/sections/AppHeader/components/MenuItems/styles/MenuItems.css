@@ -1,0 +1,13 @@
+.ant-layout-header .menu.ant-menu {
+  width: 100%;
+  padding: 0 20px;
+  border: 0;
+
+  line-height: 63px;
+}
+
+@media (max-width: 48em) {
+  .ant-layout-header .menu.ant-menu {
+    padding: 0;
+  }
+}

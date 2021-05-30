@@ -1,0 +1,51 @@
+.log-in {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.log-in-card.ant-card {
+  width: 450px;
+  padding: 10px 0 20px;
+  text-align: center;
+}
+
+.log-in-card__intro-title.ant-typography,
+.log-in-card__intro-title.ant-typography + h3.ant-typography {
+  margin-top: 5px;
+}
+
+.log-in-card__google-button {
+  display: flex;
+  align-items: center;
+
+  border: none;
+  border-radius: 2px;
+
+  margin: 40px auto;
+  padding: 1px;
+
+  color: #fff;
+  background-color: #4285f4;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.24), 0 0 1px 0 rgba(0, 0, 0, 0.12);
+
+  cursor: pointer;
+}
+
+.log-in-card__google-button:hover {
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.24), 0 0 2px 0 rgba(0, 0, 0, 0.12);
+}
+
+.log-in-card__google-button:active {
+  background: #3367d6;
+}
+
+.log-in-card__google-button-logo {
+  height: 43px;
+}
+
+.log-in-card__google-button-text {
+  padding: 10px;
+  text-align: left;
+  white-space: nowrap;
+}

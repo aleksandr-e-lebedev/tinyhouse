@@ -1,0 +1,54 @@
+.home {
+  padding: 60px 120px;
+
+  background-image: url(../assets/map-background.jpg);
+  background-repeat: no-repeat;
+  background-position: 10% 0;
+}
+
+@media (max-width: 75em) {
+  .home {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+}
+
+.home__cta-section {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 40px 0;
+
+  text-align: center;
+}
+
+.home__cta-section-title.ant-typography {
+  color: #1d226c;
+}
+
+.home__cta-section-button {
+  margin-top: 20px;
+}
+
+.home__listings {
+  padding: 40px 0 20px;
+}
+
+.home__listings-title.ant-typography {
+  display: inline-block;
+  color: #1d226c;
+}
+
+.home__listings-img-cover {
+  width: 100%;
+  cursor: pointer;
+}
+
+@media (max-width: 36em) {
+  .home__listings-img-cover {
+    padding: 10px 0;
+  }
+}
+
+.home__listings-img {
+  width: 100%;
+}

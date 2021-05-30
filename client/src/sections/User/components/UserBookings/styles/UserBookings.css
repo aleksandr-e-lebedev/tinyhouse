@@ -1,0 +1,24 @@
+.user-bookings {
+  padding-top: 40px;
+}
+
+.user-bookings__title.ant-typography {
+  display: inline-block;
+  color: #1d226c;
+}
+
+.user-bookings__description.ant-typography {
+  font-size: 15px;
+}
+
+.user-bookings__booking-history {
+  margin-bottom: 20px;
+}
+.user-bookings__booking-history > div {
+  margin-bottom: 5px;
+  font-size: 13px;
+}
+
+.user-bookings .ant-list-pagination {
+  padding-bottom: 20px;
+}

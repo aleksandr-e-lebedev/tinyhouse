@@ -1,0 +1,8 @@
+.home-listings {
+  padding: 40px 0 20px;
+}
+
+.home-listings__title.ant-typography {
+  display: inline-block;
+  color: #1d226c;
+}

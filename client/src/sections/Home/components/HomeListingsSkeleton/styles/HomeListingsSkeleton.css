@@ -1,0 +1,8 @@
+.home-listings-skeleton {
+  padding: 40px 0 20px;
+}
+
+.home-listings-skeleton__card-cover-img {
+  height: 195px;
+  background-image: url(../../../assets/listing-loading-card-cover.jpg);
+}

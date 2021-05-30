@@ -1,0 +1,29 @@
+.host {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 100px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 62em) {
+  .host {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+}
+
+.host__form-header {
+  padding-bottom: 20px;
+}
+
+.host__form-title.ant-typography {
+  margin-bottom: 5px;
+  color: #1d226c;
+}
+
+.host__form-image-upload img {
+  width: 100%;
+}
